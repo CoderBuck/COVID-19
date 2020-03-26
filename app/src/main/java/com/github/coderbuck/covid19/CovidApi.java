@@ -15,9 +15,9 @@ public interface CovidApi {
     Call<OverAll> getOverAllLatest();
 
     @GET("DXYArea.json")
-    Call<OverAll> getAreaDataLatest();
+    Call<AreaData> getAreaDataLatest();
 
     @GET("DXYArea-TimeSeries.json")
-    Call<OverAll> getAreaDataHistory();
+    Call<AreaData> getAreaDataHistory();
 
 }
