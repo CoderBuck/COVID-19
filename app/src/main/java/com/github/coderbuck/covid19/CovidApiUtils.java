@@ -1,12 +1,22 @@
 package com.github.coderbuck.covid19;
 
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CovidApiUtils {
 
+    private static OkHttpClient okHttpClient = new OkHttpClient.Builder()
+            .callTimeout(1, TimeUnit.MINUTES)
+            .connectTimeout(1, TimeUnit.MINUTES)
+            .readTimeout(1, TimeUnit.MINUTES)
+            .build();
+
     private static final Retrofit retrofit = new Retrofit.Builder()
+            .client(okHttpClient)
             .baseUrl(CovidApi.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build();

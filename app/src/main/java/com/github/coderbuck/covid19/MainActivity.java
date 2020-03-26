@@ -1,38 +1,23 @@
 package com.github.coderbuck.covid19;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.annimon.stream.Stream;
-import com.annimon.stream.function.Function;
-import com.annimon.stream.function.Predicate;
-import com.blankj.utilcode.util.FileIOUtils;
-import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.GsonUtils;
-import com.google.gson.Gson;
 import com.jakewharton.threetenabp.AndroidThreeTen;
-
-import net.dongliu.requests.Requests;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.threeten.bp.Instant;
-import org.threeten.bp.LocalDate;
-import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.ZoneId;
-import org.threeten.bp.ZoneOffset;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
-import okhttp3.ResponseBody;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,22 +25,73 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "MainActivity";
     private static Logger logger = LoggerFactory.getLogger(MainActivity.class);
+
+    @BindView(R.id.area_rv) RecyclerView mAreaRv;
+    private RvAdapter mRvAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        logger.debug("onCreate");
         AndroidThreeTen.init(this);
         super.onCreate(savedInstanceState);
-        logger.debug("onCreate");
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(CovidApi.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        mAreaRv.setLayoutManager(new LinearLayoutManager(this));
+        mRvAdapter = new RvAdapter();
+        mAreaRv.setAdapter(mRvAdapter);
 
-        CovidApi covidApi = retrofit.create(CovidApi.class);
+        requestDatas();
+
+
+
+
+    }
+
+    private void requestDatas() {
+        Call<AreaData> call = CovidApiUtils.getAreaDataLatest();
+        call.enqueue(new Callback<AreaData>() {
+            @Override
+            public void onResponse(Call<AreaData> call, Response<AreaData> response) {
+                logger.info("getAreaDataLatest onResponse");
+                AreaData body = response.body();
+                if (body == null) return;
+                List<AreaData.ResultsBean> results = body.getResults();
+                List<AreaData.ResultsBean> beans = Stream.of(results)
+                        .filter(value -> {
+                            return (!value.getCountryName().equals("中国"))
+                                    || (value.getCountryName().equals(value.getProvinceName()));
+                        })
+                        .sortBy(resultsBean -> -resultsBean.getConfirmedCount())
+                        .toList();
+                mRvAdapter.setDatas(beans);
+                mRvAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<AreaData> call, Throwable t) {
+                logger.info("getAreaDataLatest onFailure");
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }
+
+
+
+    private void xx() {
+
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl(CovidApi.BASE_URL)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//
+//        CovidApi covidApi = retrofit.create(CovidApi.class);
 //        Call<OverAll> overAll = covidApi.getOverAllHistory();
 //        overAll.enqueue(new Callback<OverAll>() {
 //            @Override
@@ -109,32 +145,25 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
-        Call<OverAll> call = covidApi.getOverAllLatest();
-        call.enqueue(new Callback<OverAll>() {
-            @Override
-            public void onResponse(Call<OverAll> call, Response<OverAll> response) {
-                logger.info("onResponse");
-                OverAll body = response.body();
-                if (body != null) {
-                    String json = GsonUtils.toJson(body);
-                    logger.info(json);
-                } else {
-                    logger.info("body != null");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<OverAll> call, Throwable t) {
-                logger.info("onFailure");
-            }
-        });
-
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+//        Call<OverAll> call = covidApi.getOverAllLatest();
+//        call.enqueue(new Callback<OverAll>() {
+//            @Override
+//            public void onResponse(Call<OverAll> call, Response<OverAll> response) {
+//                logger.info("onResponse");
+//                OverAll body = response.body();
+//                if (body != null) {
+//                    String json = GsonUtils.toJson(body);
+//                    logger.info(json);
+//                } else {
+//                    logger.info("body != null");
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<OverAll> call, Throwable t) {
+//                logger.info("onFailure");
+//            }
+//        });
 
     }
 }
