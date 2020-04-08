@@ -28,7 +28,7 @@
 
     <!-- 1000 ms -->
     <appender name='async' class='ch.qos.logback.classic.AsyncAppender'>
-        <appender-ref ref='logcat' />
+        <appender-ref ref='file' />
     </appender>
 
     <root level="DEBUG">
