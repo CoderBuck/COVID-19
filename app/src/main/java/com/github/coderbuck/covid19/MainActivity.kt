@@ -1,8 +1,11 @@
 package com.github.coderbuck.covid19
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.github.coderbuck.covid19.bean.Area
+import com.github.coderbuck.covid19.bean.Result
 import com.github.coderbuck.covid19.databinding.ActivityMainBinding
 import org.slf4j.LoggerFactory
 import retrofit2.Call
@@ -29,14 +32,12 @@ class MainActivity : AppCompatActivity() {
         v.rv.layoutManager = LinearLayoutManager(this)
         v.rv.adapter = mRvAdapter
         requestDatas()
-
-
     }
 
     private fun requestDatas() {
         val call = CovidApiUtils.areaDataLatest
-        call.enqueue(object : Callback<AreaInfo> {
-            override fun onResponse(call: Call<AreaInfo>, response: Response<AreaInfo>) {
+        call.enqueue(object : Callback<Result<Area>> {
+            override fun onResponse(call: Call<Result<Area>>, response: Response<Result<Area>>) {
                 logger.info("getAreaDataLatest onResponse")
                 val body = response.body() ?: return
                 val beans = body.results
@@ -48,8 +49,9 @@ class MainActivity : AppCompatActivity() {
                 mRvAdapter.notifyDataSetChanged()
             }
 
-            override fun onFailure(call: Call<AreaInfo>, t: Throwable) {
+            override fun onFailure(call: Call<Result<Area>>, t: Throwable) {
                 logger.info("getAreaDataLatest onFailure")
+                Toast.makeText(this@MainActivity, R.string.request_data_failure, Toast.LENGTH_SHORT).show()
             }
         })
     }

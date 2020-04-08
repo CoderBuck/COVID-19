@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">COVID-19</string>
+    <string name="request_data_failure">获取数据失败</string>
 </resources>

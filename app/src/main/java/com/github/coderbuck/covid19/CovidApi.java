@@ -1,5 +1,9 @@
 package com.github.coderbuck.covid19;
 
+import com.github.coderbuck.covid19.bean.Area;
+import com.github.coderbuck.covid19.bean.OverAll;
+import com.github.coderbuck.covid19.bean.Result;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 
@@ -9,15 +13,15 @@ public interface CovidApi {
 
 
     @GET("DXYOverall-TimeSeries.json")
-    Call<OverAll> getOverAllHistory();
+    Call<Result<OverAll>> getOverAllHistory();
 
     @GET("DXYOverall.json")
-    Call<OverAll> getOverAllLatest();
+    Call<Result<OverAll>> getOverAllLatest();
 
     @GET("DXYArea.json")
-    Call<AreaInfo> getAreaDataLatest();
+    Call<Result<Area>> getAreaDataLatest();
 
     @GET("DXYArea-TimeSeries.json")
-    Call<AreaData> getAreaDataHistory();
+    Call<Result<Area>> getAreaDataHistory();
 
 }

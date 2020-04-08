@@ -1,10 +1,9 @@
 package com.github.coderbuck.covid19
 
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import kotlinx.serialization.json.Json
+import com.github.coderbuck.covid19.bean.Area
+import com.github.coderbuck.covid19.bean.OverAll
+import com.github.coderbuck.covid19.bean.Result
 import okhttp3.Interceptor
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -27,26 +26,24 @@ object CovidApiUtils {
         return log
     }
 
-    val contentType = "application/json".toMediaType()
     private val retrofit = Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl(CovidApi.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
-            .addConverterFactory(Json.asConverterFactory(contentType))
             .build()
 
     private var covidApi: CovidApi = retrofit.create(CovidApi::class.java)
 
 
-    val overAllHistory: Call<OverAll>
+    val overAllHistory: Call<Result<OverAll>>
         get() = covidApi.overAllHistory
 
-    val overAllLatest: Call<OverAll>
+    val overAllLatest: Call<Result<OverAll>>
         get() = covidApi.overAllLatest
 
-    val areaDataLatest: Call<AreaInfo>
+    val areaDataLatest: Call<Result<Area>>
         get() = covidApi.areaDataLatest
 
-    val areaDataHistory: Call<AreaData>
+    val areaDataHistory: Call<Result<Area>>
         get() = covidApi.areaDataHistory
 }

@@ -7,6 +7,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.coderbuck.covid19.bean.Area;
 import com.github.coderbuck.covid19.databinding.ItemRvBinding;
 
 import java.util.ArrayList;
@@ -15,9 +16,9 @@ import java.util.List;
 
 public class RvAdapter extends RecyclerView.Adapter<RvAdapter.Holder> {
 
-    List<AreaInfoResult> datas = new ArrayList<>();
+    List<Area> datas = new ArrayList<>();
 
-    public void setDatas(List<AreaInfoResult> datas) {
+    public void setDatas(List<Area> datas) {
         this.datas.clear();
         this.datas.addAll(datas);
     }
@@ -31,7 +32,7 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.Holder> {
 
     @Override
     public void onBindViewHolder(@NonNull Holder holder, int position) {
-        AreaInfoResult bean = datas.get(position);
+        Area bean = datas.get(position);
         String name = bean.getCountryName();
         int count = bean.getConfirmedCount();
         holder.mTv.setText(name + "  " + count);
