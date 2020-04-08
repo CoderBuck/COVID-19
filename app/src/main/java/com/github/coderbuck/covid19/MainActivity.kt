@@ -45,7 +45,8 @@ class MainActivity : AppCompatActivity() {
                         .sortedBy { -it.confirmedCount }
                         .toList()
 
-                mRvAdapter.setDatas(beans)
+                mRvAdapter.data.clear()
+                mRvAdapter.data.addAll(beans)
                 mRvAdapter.notifyDataSetChanged()
             }
 
