@@ -32,18 +32,14 @@ object CovidApiUtils {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-    private var covidApi: CovidApi = retrofit.create(CovidApi::class.java)
+    private val covidApi: CovidApi = retrofit.create(CovidApi::class.java)
 
 
-    val overAllHistory: Call<Result<OverAll>>
-        get() = covidApi.overAllHistory
+    val overAllHistory: Call<Result<OverAll>> = covidApi.overAllHistory
 
-    val overAllLatest: Call<Result<OverAll>>
-        get() = covidApi.overAllLatest
+    val overAllLatest: Call<Result<OverAll>> = covidApi.overAllLatest
 
-    val areaDataLatest: Call<Result<Area>>
-        get() = covidApi.areaDataLatest
+    val areaDataLatest: Call<Result<Area>> = covidApi.areaDataLatest
 
-    val areaDataHistory: Call<Result<Area>>
-        get() = covidApi.areaDataHistory
+    val areaDataHistory: Call<Result<Area>> = covidApi.areaDataHistory
 }
